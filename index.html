@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/estilos.css">
+    <title>Document</title>
+</head>
+<body>
+<div class="container">
+        <h1>Infomacion para crear tu CURP</h1>
+        <br>
+        <h2>Completa la información que se te pida sin dejar esapcios en blanco</h2>
+        <form id="curpForm">
+            <label for="nombre">Nombre(s):</label>
+            <input type="text" id="nombre" required>
+            
+            <label for="apellP">Apellido Paterno:</label>
+            <input type="text" id="apellP" required>
+            
+            <label for="apellM">Apellido Materno:</label>
+            <input type="text" id="apellM" required>
+            
+            <label for="fecha">Fecha de Nacimiento:</label>
+            <input type="date" id="fecha" required>
+            
+            <label for="sexo">Sexo:</label>
+            <select id="sexo" required>
+                <option value="H">Hombre</option>
+                <option value="M">Mujer</option>
+            </select>
+            
+            <label for="estado">Entidad Federativa:</label>
+            <input type="text" id="estado" required>
+            <div>
+                <button onclick="myfunction()"></button>
+                <div>
+
+                </div>
+            </div>
+            <button type="button" onclick="generateCURP()">Tu CURP es:</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function generateCURP() {
+            const firstName = document.getElementById("nombre").value.toUpperCase();
+            const lastName = document.getElementById("apellP").value.toUpperCase();
+            const motherLastName = document.getElementById("apellM").value.toUpperCase();
+            const dob = document.getElementById("fecha").value;
+            const gender = document.getElementById("sexo").value;
+            const state = document.getElementById("estado").value.toUpperCase();
+
+            if (!firstName || !lastName || !motherLastName || !dob || !gender || !state) {
+                alert("Por favor, completa todos los campos.");
+                return;
+            }
+
+            // Procesamos los apellidos y nombres
+            let curp = lastName.substring(0, 2); // Primeras dos letras del primer apellido
+            curp += motherLastName.substring(0, 1); // Primera letra del segundo apellido
+            curp += firstName.substring(0, 1); // Primera letra del primer nombre
+
+            // Fecha de nacimiento 
+            const dateOfBirth = new Date(dob);
+            const year = dateOfBirth.getFullYear().toString().substring(2, 4);
+            const month = (dateOfBirth.getMonth() + 1).toString().padStart(2, "0");
+            const day = dateOfBirth.getDate().toString().padStart(2, "0");
+            curp += year + month + day;
+
+            // Sexo
+            curp += gender;
+
+            // Primeras consonantes internas del primer apellido, segundo apellido y nombre
+            curp += getInternalConsonant(lastName);
+            curp += getInternalConsonant(motherLastName);
+            curp += getInternalConsonant(firstName);
+
+            // Entidad federativa
+            curp += state.substring(0, 2);
+
+            // Generar CURP y mostrar
+            document.getElementById("result").innerText = `CURP Generada: ${curp}`;
+        }
+
+        // Función para obtener la primera consonante interna de un string
+        function getInternalConsonant(name) {
+            const vowels = ['A', 'E', 'I', 'O', 'U'];
+            for (let i = 1; i < name.length; i++) {
+                if (!vowels.includes(name[i])) {
+                    return name[i];
+                }
+            }
+            return 'X'; // Si no encuentra una consonante, devuelve 'X'
+        }
+    </script>    
+</body>
+</html>
